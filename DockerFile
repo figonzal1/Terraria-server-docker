@@ -1,0 +1,22 @@
+FROM ubuntu:18.04
+
+RUN apt-get update && apt-get install nano unzip -y \ 
+&& apt-get clean \
+&& rm -rf /var/lib/apt/lists/*
+
+COPY terraria-server-1405.zip /root
+RUN cd ./root/ \
+&& unzip terraria-server-1405.zip \
+&& cd 1405/Linux \
+&& chmod u+x TerrariaServer* \
+&& rm -r /root/terraria-server-1405.zip
+
+ADD startserver.sh ./root/1405/Linux/startserver.sh
+RUN cp ./root/1405/Windows/serverconfig.txt ./root/1405/Linux/serverconfig.txt \
+&& cd ./root/1405/Linux/ && chmod +x startserver.sh
+
+WORKDIR ./root/1405/Linux
+EXPOSE 7777
+
+ENTRYPOINT ["./startserver.sh"]
+
